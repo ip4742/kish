@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be My Valentine?</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -47,8 +48,10 @@
             color: white;
             position: absolute;
         }
+        
+        /* 🔄 Original Image, Bigger & Spins */
         #image {
-            width: 300px;
+            width: 350px;
             height: auto;
             margin-top: 50px;
             display: none;
@@ -57,22 +60,30 @@
             transition: transform 1s ease-in-out;
         }
         .bigger {
-            transform: scale(1.5);
+            transform: scale(2); /* Bigger */
+            animation: spin 3s linear infinite;
         }
-        
-        /* Firework Effect */
-        .firework {
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(2); }
+            100% { transform: rotate(360deg) scale(2); }
+        }
+
+        /* ✨ Sparkles */
+        .sparkle {
             position: absolute;
             width: 10px;
             height: 10px;
-            background: rgba(30, 144, 255, 0.9); /* DodgerBlue for blue fireworks */
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            animation: explode 1.5s ease-out forwards;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 1);
+            animation: sparkle 1s infinite ease-in-out;
         }
 
-        @keyframes explode {
+        @keyframes sparkle {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(4); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -96,7 +107,7 @@
                     $(this).text("I LOVE YOU! 💙").fadeIn(500);
                 });
 
-                // Make image bigger and show it
+                // Show and enlarge the image
                 $("#image").fadeIn().addClass("bigger");
 
                 // Play song
@@ -105,8 +116,8 @@
                     console.log("Playback prevented, user must interact with the page first.");
                 });
 
-                // Start fireworks
-                createFireworks();
+                // Start Sparkles
+                createSparkles();
             });
 
             // No Button Hover Effect - Moves Away Randomly
@@ -118,31 +129,24 @@
                 $(this).css({ left: x + "px", top: y + "px" });
             });
 
-            // Function to Create Fireworks
-            function createFireworks() {
-                for (let i = 0; i < 40; i++) { // More fireworks
-                    let firework = $("<div class='firework'></div>");
-                    $("body").append(firework);
+            // Function to Create Sparkles
+            function createSparkles() {
+                for (let i = 0; i < 50; i++) {
+                    let sparkle = $("<div class='sparkle'></div>");
+                    $("body").append(sparkle);
 
                     let x = Math.random() * window.innerWidth;
                     let y = Math.random() * window.innerHeight;
 
-                    firework.css({
+                    sparkle.css({
                         left: x + "px",
-                        top: y + "px",
-                        backgroundColor: getRandomColor() // Different colored fireworks
+                        top: y + "px"
                     });
 
                     setTimeout(() => {
-                        firework.fadeOut(1500, function() { $(this).remove(); });
-                    }, Math.random() * 1000 + 500);
+                        sparkle.fadeOut(1000, function() { $(this).remove(); });
+                    }, Math.random() * 2000 + 1000);
                 }
-            }
-
-            // Function to Generate Random Firework Colors
-            function getRandomColor() {
-                let colors = ["#1E90FF", "#00BFFF", "#87CEEB", "#4682B4", "#ADD8E6"]; // Various shades of blue
-                return colors[Math.floor(Math.random() * colors.length)];
             }
         });
     </script>
