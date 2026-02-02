@@ -15,7 +15,7 @@
         }
 
         #quiz-container {
-            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://i.imgur.com/98tfSE7.jpeg');
+            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('https://i.imgur.com/98tfSE7.jpeg');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -25,47 +25,53 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            z-index: 1;
         }
 
         h1 {
             color: white;
-            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-size: clamp(1.8rem, 5vw, 3rem);
             font-weight: 700;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9);
             margin-bottom: 250px;
             pointer-events: none;
+            z-index: 5;
         }
 
-        /* Moving buttons - now with higher Z-index to ensure they show */
         .decoy-btn {
-            padding: 15px 40px;
-            font-size: 1.4rem;
+            padding: 12px 35px;
+            font-size: 1.2rem;
             border: none;
             cursor: pointer;
-            border-radius: 12px;
+            border-radius: 8px;
             font-weight: 600;
             position: absolute;
-            transition: all 0.15s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 999; 
+            transition: all 0.1s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            z-index: 100;
         }
 
-        /* Initial positions so they are visible immediately */
-        #bigYes { background-color: #e63946; color: white; top: 60%; left: 35%; }
-        #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
+        #bigYes { background-color: #e63946; color: white; top: 55%; left: 30%; }
+        #bigNo { background-color: white; color: #333; top: 55%; left: 55%; }
 
-        /* The Secret Tiny Button hidden on the Rutgers Flag */
+        /* THE SECRET BUTTON - Now says "of course baby" */
         #secretYes {
             position: absolute;
-            width: 40px;
-            height: 40px;
             background: transparent;
             border: none;
             cursor: pointer;
             z-index: 10;
-            top: 15%; /* Positioned near the red flag on the right */
+            top: 15%; /* Aligned with the Rutgers Flag area */
             right: 8%;
+            color: rgba(255, 255, 255, 0.4); /* Faint so it blends with the white logo */
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: lowercase;
+            transition: color 0.3s ease;
+        }
+
+        #secretYes:hover {
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
 
         #success-screen {
@@ -78,17 +84,18 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 1000;
         }
 
         .success-box {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 50px;
+            border-radius: 30px;
             color: white;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
     </style>
 </head>
@@ -100,13 +107,13 @@
         <button class="decoy-btn" id="bigYes">YES</button>
         <button class="decoy-btn" id="bigNo">NO</button>
 
-        <button id="secretYes" title="???"></button>
+        <button id="secretYes">of course baby</button>
     </div>
 
     <div id="success-screen">
         <div class="success-box">
-            <h1>YOU FOUND IT! 🥰</h1>
-            <p style="font-size: 1.5rem;">I LOVE YOU! See you soon!</p>
+            <h1 style="margin:0; font-size: 3.5rem;">YOU FOUND IT! 🥰</h1>
+            <p style="font-size: 1.5rem; margin-top: 15px;">I LOVE YOU!</p>
         </div>
     </div>
 
@@ -115,7 +122,7 @@
     <script>
         $(document).ready(function() {
             function moveButton(btn) {
-                const padding = 100;
+                const padding = 80;
                 const maxX = window.innerWidth - $(btn).outerWidth() - padding;
                 const maxY = window.innerHeight - $(btn).outerHeight() - padding;
                 const newX = Math.max(padding, Math.random() * maxX);
@@ -123,22 +130,16 @@
                 $(btn).css({ left: newX + "px", top: newY + "px" });
             }
 
-            // Both buttons run away
+            // Decoys move away
             $("#bigYes, #bigNo").on("mouseover touchstart", function() {
                 moveButton(this);
             });
 
-            // If he manages to click a decoy
-            $("#bigYes, #bigNo").click(function() {
-                moveButton(this);
-            });
-
-            // The Secret Success Button (Hidden on the Rutgers Flag)
+            // Secret button click
             $("#secretYes").click(function() {
-                $("#quiz-container").fadeOut(800, function() {
+                $("#quiz-container").fadeOut(600, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
-                    let track = document.getElementById("song");
-                    track.play().catch(e => console.log("Music blocked by browser until interaction."));
+                    document.getElementById("song").play();
                 });
             });
         });
