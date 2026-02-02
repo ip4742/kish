@@ -3,44 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be My Valentine 2026? 💙</title>
+    <title>Valentine 2026 🎀</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
-            background-color: #0a0f4a;
-            /* Using your starry background from last year */
-            background-image: url('https://i.imgur.com/1ciZWeP.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            text-align: center;
+        body, html {
+            height: 100%;
+            margin: 0;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
-            color: white;
-            margin: 0;
+        }
+
+        /* Full Screen Background for the Question */
+        .bg-container {
+            background-image: url('https://i.imgur.com/98tfSE7.jpeg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            text-align: center;
         }
 
         h1 {
+            color: white;
             font-size: 3em;
-            color: #e0e0ff;
-            text-shadow: 2px 2px 15px rgba(255,255,255,0.8);
-            margin-bottom: 30px;
-            z-index: 10;
+            text-shadow: 4px 4px 15px rgba(0,0,0,0.7);
+            margin-bottom: 20px;
+            padding: 0 20px;
         }
 
         .buttons {
             position: relative;
+            height: 150px;
             width: 100%;
-            height: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 20px;
         }
 
         .btn {
@@ -50,109 +51,86 @@
             cursor: pointer;
             border-radius: 50px;
             font-weight: bold;
-            transition: transform 0.2s;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            z-index: 100;
+        }
+
+        #noBtn {
+            background-color: #eeeeee;
+            color: #333;
+            position: absolute;
             z-index: 10;
         }
 
-        .yes {
-            background-color: #e0e0ff;
-            color: #0a0f4a;
-            box-shadow: 0px 0px 20px rgba(255,255,255,0.8);
+        /* Success Screen Styles */
+        #success-screen {
+            display: none;
+            background-image: url('https://i.imgur.com/WHh6I61.jpeg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .no {
-            background-color: #6c757d;
-            color: white;
-            position: absolute; /* This allows it to jump around */
-        }
-
-        #image {
-            width: 300px;
+        .success-text {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
             border-radius: 20px;
-            box-shadow: 0px 0px 30px rgba(255,255,255,0.6);
-            margin-top: 20px;
-            display: none; /* Hidden until Yes is clicked */
-        }
-
-        /* 🔄 The Spin Animation you liked */
-        .bigger {
-            display: block !important;
-            animation: spinAndGrow 3s ease-in-out forwards;
-        }
-
-        @keyframes spinAndGrow {
-            0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            100% { transform: scale(1.2) rotate(360deg); opacity: 1; }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0px 0px 10px white;
-            pointer-events: none;
+            color: white;
+            font-size: 3.5em;
         }
     </style>
 </head>
 <body>
 
-    <h1 id='mainText'>Will you be my Valentine again in 2026? 🎤💙</h1>
-
-    <div class="buttons">
-        <button class="btn yes" id="yesBtn">YES</button>
-        <button class="btn no" id="noBtn">NO</button>
+    <div class="bg-container" id="quiz-container">
+        <h1>Will you be my Valentine? ❤️</h1>
+        <div class="buttons">
+            <button class="btn" id="yesBtn">YES</button>
+            <button class="btn" id="noBtn">No</button>
+        </div>
     </div>
 
-    <img id="image" src="https://i.imgur.com/OWdv860.jpeg">
+    <div id="success-screen">
+        <h1 class="success-text">YAY! I LOVE YOU! 🥰</h1>
+    </div>
 
-    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3" preload="auto"></audio>
+    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3"></audio>
 
     <script>
         $(document).ready(function() {
-            // Move NO button on hover
+            let scale = 1;
+
+            // Runaway NO button logic
             $("#noBtn").on("mouseover touchstart", function() {
-                let x = Math.random() * (window.innerWidth - $(this).width());
-                let y = Math.random() * (window.innerHeight - $(this).height());
+                let x = Math.random() * (window.innerWidth - $(this).outerWidth());
+                let y = Math.random() * (window.innerHeight - $(this).outerHeight());
+                
                 $(this).css({ left: x + "px", top: y + "px" });
+
+                // Make the YES button grow so he has no choice!
+                scale += 0.15;
+                $("#yesBtn").css("transform", "scale(" + scale + ")");
             });
 
-            // When YES is clicked
+            // YES button click logic
             $("#yesBtn").click(function() {
-                // Change text
-                $("#mainText").fadeOut(500, function() {
-                    $(this).text("I KNEW IT! I LOVE YOU! 💙").fadeIn(500);
+                $("#quiz-container").fadeOut(500, function() {
+                    $("#success-screen").css("display", "flex").hide().fadeIn(500);
+                    $("#song")[0].play();
                 });
-
-                // Hide the NO button so it doesn't distract
-                $("#noBtn").hide();
-
-                // Show and spin the image
-                $("#image").addClass("bigger");
-
-                // Play song
-                let song = $("#song")[0];
-                song.play();
-
-                // Start sparkles
-                setInterval(createSparkle, 100);
             });
-
-            function createSparkle() {
-                const sparkle = $("<div class='sparkle'></div>");
-                $("body").append(sparkle);
-                
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight;
-                
-                sparkle.css({ left: x + "px", top: y + "px" });
-                
-                setTimeout(() => {
-                    sparkle.fadeOut(1000, function() { $(this).remove(); });
-                }, 1000);
-            }
         });
     </script>
+
 </body>
 </html>
