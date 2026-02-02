@@ -3,139 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Question ❤️</title>
+    <title>Be My Valentine 2026? 💙</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
+            background-color: #0a0f4a;
+            /* Using your starry background from last year */
+            background-image: url('https://i.imgur.com/1ciZWeP.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
+            margin: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #ffebee; /* Soft Pink */
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
         }
 
         h1 {
-            color: #d32f2f;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .gif-container img {
-            width: 200px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            font-size: 3em;
+            color: #e0e0ff;
+            text-shadow: 2px 2px 15px rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            z-index: 10;
         }
 
         .buttons {
+            position: relative;
+            width: 100%;
+            height: 100px;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            position: relative;
-            height: 60px;
+            align-items: center;
+            gap: 40px;
         }
 
-        button {
-            padding: 15px 30px;
-            font-size: 1.2rem;
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.5em;
             border: none;
-            border-radius: 50px;
             cursor: pointer;
+            border-radius: 50px;
+            font-weight: bold;
             transition: transform 0.2s;
+            z-index: 10;
         }
 
-        #yesBtn {
-            background-color: #4caf50;
+        .yes {
+            background-color: #e0e0ff;
+            color: #0a0f4a;
+            box-shadow: 0px 0px 20px rgba(255,255,255,0.8);
+        }
+
+        .no {
+            background-color: #6c757d;
             color: white;
+            position: absolute; /* This allows it to jump around */
         }
 
-        #yesBtn:hover {
-            transform: scale(1.1);
-            background-color: #45a049;
+        #image {
+            width: 300px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 30px rgba(255,255,255,0.6);
+            margin-top: 20px;
+            display: none; /* Hidden until Yes is clicked */
         }
 
-        #noBtn {
-            background-color: #f44336;
-            color: white;
-            position: absolute; /* Needed for moving around */
-            transition: 0.1s;
+        /* 🔄 The Spin Animation you liked */
+        .bigger {
+            display: block !important;
+            animation: spinAndGrow 3s ease-in-out forwards;
         }
 
-        .hidden {
-            display: none;
+        @keyframes spinAndGrow {
+            0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
+            100% { transform: scale(1.2) rotate(360deg); opacity: 1; }
         }
 
-        #success-msg {
-            font-size: 2rem;
-            color: #d32f2f;
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0px 0px 10px white;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="mainContainer">
-        <div id="questionArea">
-            <div class="gif-container">
-                <img src="https://imgur.com/98tfSE7" alt="Cute gif">
-            </div>
-            <h1>Will you be my Valentine? ❤️</h1>
-            <div class="buttons">
-                <button id="yesBtn">Yes!</button>
-                <button id="noBtn">No</button>
-            </div>
-        </div>
+    <h1 id='mainText'>Will you be my Valentine again in 2026? 🎤💙</h1>
 
-        <div id="successArea" class="hidden">
-            <div class="gif-container">
-                <img src="https://imgur.com/a/JgJc2UG" alt="Happy gif">
-            </div>
-            <h1>Yay! See you on the 14th! 🥰✨</h1>
-        </div>
+    <div class="buttons">
+        <button class="btn yes" id="yesBtn">YES</button>
+        <button class="btn no" id="noBtn">NO</button>
     </div>
 
+    <img id="image" src="https://i.imgur.com/OWdv860.jpeg">
+
+    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3" preload="auto"></audio>
+
     <script>
-        const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
-        const questionArea = document.getElementById('questionArea');
-        const successArea = document.getElementById('successArea');
+        $(document).ready(function() {
+            // Move NO button on hover
+            $("#noBtn").on("mouseover touchstart", function() {
+                let x = Math.random() * (window.innerWidth - $(this).width());
+                let y = Math.random() * (window.innerHeight - $(this).height());
+                $(this).css({ left: x + "px", top: y + "px" });
+            });
 
-        // Logic to move the 'No' button
-        noBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+            // When YES is clicked
+            $("#yesBtn").click(function() {
+                // Change text
+                $("#mainText").fadeOut(500, function() {
+                    $(this).text("I KNEW IT! I LOVE YOU! 💙").fadeIn(500);
+                });
+
+                // Hide the NO button so it doesn't distract
+                $("#noBtn").hide();
+
+                // Show and spin the image
+                $("#image").addClass("bigger");
+
+                // Play song
+                let song = $("#song")[0];
+                song.play();
+
+                // Start sparkles
+                setInterval(createSparkle, 100);
+            });
+
+            function createSparkle() {
+                const sparkle = $("<div class='sparkle'></div>");
+                $("body").append(sparkle);
+                
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                
+                sparkle.css({ left: x + "px", top: y + "px" });
+                
+                setTimeout(() => {
+                    sparkle.fadeOut(1000, function() { $(this).remove(); });
+                }, 1000);
+            }
         });
-
-        // Optional: If they manage to click it (touch screen), make it move too!
-        noBtn.addEventListener('click', () => {
-            alert("Nice try! Try again 😉");
-        });
-
-        // Logic for the 'Yes' button
-        yesBtn.addEventListener('click', () => {
-            questionArea.classList.add('hidden');
-            successArea.classList.remove('hidden');
-            
-            // Adding some confetti effect (optional)
-            launchConfetti();
-        });
-
-        // Simple background heart effect
-        function launchConfetti() {
-            document.body.style.backgroundColor = "#ffcdd2";
-        }
     </script>
 </body>
 </html>
