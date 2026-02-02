@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question ❤️</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffebee; /* Soft Pink */
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 200px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            height: 60px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #yesBtn {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            background-color: #45a049;
+        }
+
+        #noBtn {
+            background-color: #f44336;
+            color: white;
+            position: absolute; /* Needed for moving around */
+            transition: 0.1s;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #success-msg {
+            font-size: 2rem;
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <div id="questionArea">
+            <div class="gif-container">
+                <img src="https://imgur.com/98tfSE7" alt="Cute gif">
+            </div>
+            <h1>Will you be my Valentine? ❤️</h1>
+            <div class="buttons">
+                <button id="yesBtn">Yes!</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div id="successArea" class="hidden">
+            <div class="gif-container">
+                <img src="https://imgur.com/a/JgJc2UG" alt="Happy gif">
+            </div>
+            <h1>Yay! See you on the 14th! 🥰✨</h1>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionArea = document.getElementById('questionArea');
+        const successArea = document.getElementById('successArea');
+
+        // Logic to move the 'No' button
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        });
+
+        // Optional: If they manage to click it (touch screen), make it move too!
+        noBtn.addEventListener('click', () => {
+            alert("Nice try! Try again 😉");
+        });
+
+        // Logic for the 'Yes' button
+        yesBtn.addEventListener('click', () => {
+            questionArea.classList.add('hidden');
+            successArea.classList.remove('hidden');
+            
+            // Adding some confetti effect (optional)
+            launchConfetti();
+        });
+
+        // Simple background heart effect
+        function launchConfetti() {
+            document.body.style.backgroundColor = "#ffcdd2";
+        }
+    </script>
+</body>
+</html>
