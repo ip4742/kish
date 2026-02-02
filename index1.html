@@ -37,7 +37,6 @@
             pointer-events: none;
         }
 
-        /* The Moving Decoy Buttons */
         .decoy-btn {
             padding: 15px 40px;
             font-size: 1.3rem;
@@ -54,27 +53,21 @@
         #bigYes { background-color: #e63946; color: white; top: 60%; left: 30%; }
         #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
 
-        /* THE SECRET BUTTON - Visible but subtle on the red flag */
         #secretYes {
             position: absolute;
             background: transparent;
             border: none;
             cursor: pointer;
-            z-index: 500; /* High layer to stay on top */
+            z-index: 500;
             top: 14%; 
             right: 8.5%;
-            color: rgba(255, 255, 255, 0.7); /* More visible than before */
+            color: rgba(255, 255, 255, 0.7);
             font-size: 11px;
             font-weight: bold;
             text-transform: lowercase;
-            text-shadow: 0 0 8px #e63946; /* Red glow to help it pop */
+            text-shadow: 0 0 8px #e63946;
             padding: 10px;
-        }
-
-        #secretYes:hover {
-            color: white;
-            text-shadow: 0 0 15px white;
-            transform: scale(1.1);
+            transition: opacity 0.3s;
         }
 
         #success-screen {
@@ -105,25 +98,34 @@
 <body>
 
     <div id="quiz-container">
-        <h1>Will you be my Valentine? ❤️</h1>
-        
+        <h1 id="questionText">Will you be my Valentine? ❤️</h1>
         <button class="decoy-btn" id="bigYes">YES</button>
         <button class="decoy-btn" id="bigNo">NO</button>
-
         <button id="secretYes">of course baby</button>
     </div>
 
     <div id="success-screen">
         <div class="success-box">
-            <h1 style="margin:0; font-size: 3.5rem;">YOU FOUND IT! 🥰</h1>
+            <h1 style="margin:0; font-size: 3.5rem;">great answer 🥰</h1>
             <p style="font-size: 1.5rem; margin-top: 15px;">I LOVE YOU!</p>
         </div>
     </div>
 
-    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3" preload="auto"></audio>
+    <audio id="song" loop>
+        <source src="https://files.catbox.moe/vyw3qg.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         $(document).ready(function() {
+            const song = document.getElementById("song");
+
+            // Fix for Mobile/Chrome: Prepare the audio on the first click anywhere
+            $("body").one("click", function() {
+                song.play().then(() => {
+                    song.pause(); // Pre-load and pause until the win
+                }).catch(e => console.log("Audio readying..."));
+            });
+
             function moveButton(btn) {
                 const padding = 100;
                 const maxX = window.innerWidth - $(btn).outerWidth() - padding;
@@ -140,7 +142,8 @@
             $("#secretYes").click(function() {
                 $("#quiz-container").fadeOut(600, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
-                    document.getElementById("song").play();
+                    song.currentTime = 0; // Start song from beginning
+                    song.play();
                 });
             });
         });
