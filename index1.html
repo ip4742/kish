@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valentine 2026 🎀</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         body, html { height: 100%; margin: 0; font-family: 'Montserrat', sans-serif; overflow: hidden; background-color: #000; }
 
-        /* Initial Overlay to bypass browser music blocks */
+        /* Romantic Entry Overlay */
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; justify-content: center;
-            align-items: center; z-index: 2000; color: white; cursor: pointer;
+            background: rgba(0,0,0,0.95); display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 2000; color: white; cursor: pointer;
         }
 
         #quiz-container {
@@ -34,7 +34,6 @@
         #bigYes { background-color: #e63946; color: white; top: 60%; left: 30%; }
         #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
 
-        /* PULSING SECRET BUTTON */
         #secretYes {
             position: absolute; background: transparent; border: none; cursor: pointer;
             z-index: 500; top: 14%; right: 8.5%; color: rgba(255, 255, 255, 0.8);
@@ -49,24 +48,56 @@
             100% { opacity: 0.4; }
         }
 
+        /* Success Screen */
         #success-screen {
-            display: none; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://i.imgur.com/WHh6I61.jpeg');
+            display: none; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.imgur.com/WHh6I61.jpeg');
             background-size: cover; background-position: center;
             height: 100vh; width: 100vw; flex-direction: column;
             justify-content: center; align-items: center; z-index: 1000;
+            overflow: hidden;
         }
 
         .success-box {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            padding: 50px; border-radius: 30px; color: white; text-align: center;
-            border: 1px solid rgba(255,255,255,0.2);
+            padding: 40px 60px; border-radius: 30px; color: white; text-align: center;
+            border: 2px solid rgba(255,255,255,0.4);
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.6);
+            animation: spin-in 1.5s ease-out forwards;
+            position: relative; z-index: 1001;
         }
+
+        #kish-tag {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem; color: #ff4d6d;
+            text-shadow: 0 0 10px white; margin-top: 10px;
+        }
+
+        @keyframes spin-in {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: absolute; color: #ff4d6d; font-size: 20px;
+            user-select: none; pointer-events: none;
+            animation: fly 4s linear infinite; z-index: 1002;
+        }
+
+        @keyframes fly {
+            0% { transform: translateY(100vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Firework Canvas */
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <h2>Click to Start 🎵</h2>
+        <h2>A message for you... ❤️</h2>
+        <p>Click to open</p>
     </div>
 
     <div id="quiz-container">
@@ -77,9 +108,11 @@
     </div>
 
     <div id="success-screen">
+        <canvas id="canvas"></canvas>
         <div class="success-box">
-            <h1 style="margin:0; font-size: 3.5rem;">great answer! 🥰</h1>
-            <p style="font-size: 1.5rem; margin-top: 15px;">I LOVE YOU!</p>
+            <h1 style="margin:0; font-size: 3rem;">great answer! 🥰</h1>
+            <p style="font-size: 1.5rem; margin-top: 10px; margin-bottom: 5px;">I LOVE YOU!</p>
+            <div id="kish-tag">#kish</div>
         </div>
     </div>
 
@@ -91,35 +124,73 @@
         $(document).ready(function() {
             const song = document.getElementById("song");
 
-            // Music Bypass logic
             $("#overlay").click(function() {
                 $(this).fadeOut(500);
-                // Play and immediately pause to "unlock" the audio for later
-                song.play();
-                song.pause();
-                song.currentTime = 0;
+                song.play(); song.pause(); song.currentTime = 0;
             });
 
             function moveButton(btn) {
                 const padding = 100;
                 const maxX = window.innerWidth - $(btn).outerWidth() - padding;
                 const maxY = window.innerHeight - $(btn).outerHeight() - padding;
-                const newX = Math.max(padding, Math.random() * maxX);
-                const newY = Math.max(padding, Math.random() * maxY);
-                $(btn).css({ left: newX + "px", top: newY + "px" });
+                $(btn).css({ left: Math.max(padding, Math.random() * maxX) + "px", top: Math.max(padding, Math.random() * maxY) + "px" });
             }
 
-            $("#bigYes, #bigNo").on("mouseover touchstart", function() {
-                moveButton(this);
-            });
+            $("#bigYes, #bigNo").on("mouseover touchstart", function() { moveButton(this); });
+
+            // Create Hearts
+            function createHeart() {
+                const heart = $('<div class="heart">❤️</div>');
+                heart.css({ left: Math.random() * 100 + "vw", fontSize: (Math.random() * 20 + 10) + "px" });
+                $('#success-screen').append(heart);
+                setTimeout(() => heart.remove(), 4000);
+            }
 
             $("#secretYes").click(function() {
                 $("#quiz-container").fadeOut(600, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
-                    song.play().catch(e => console.log("Playback error: ", e));
+                    song.play();
+                    setInterval(createHeart, 300);
+                    initFireworks();
                 });
             });
         });
+
+        // Simple Firework Script
+        function initFireworks() {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+
+            function Particle(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.velocity = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
+                this.alpha = 1;
+                this.draw = () => {
+                    ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath();
+                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2); ctx.fillStyle = this.color;
+                    ctx.fill(); ctx.restore();
+                };
+                this.update = () => {
+                    this.velocity.y += 0.05; this.x += this.velocity.x; this.y += this.velocity.y;
+                    this.alpha -= 0.01;
+                };
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (Math.random() < 0.05) {
+                    const x = Math.random() * canvas.width; const y = Math.random() * canvas.height/2;
+                    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+                    for(let i=0; i<30; i++) particles.push(new Particle(x, y, color));
+                }
+                particles.forEach((p, i) => { if(p.alpha <= 0) particles.splice(i, 1); else { p.update(); p.draw(); } });
+            }
+            animate();
+        }
     </script>
 </body>
 </html>
