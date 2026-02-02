@@ -11,11 +11,12 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
+            background-color: #000;
         }
 
-        /* Full Screen Background for the Question */
-        .bg-container {
-            background-image: url('https://i.imgur.com/98tfSE7.jpeg');
+        /* Full Screen Background for Question */
+        #quiz-container {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.imgur.com/98tfSE7.jpeg');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -24,51 +25,53 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            transition: opacity 0.8s ease;
         }
 
         h1 {
             color: white;
-            font-size: 3em;
-            text-shadow: 4px 4px 15px rgba(0,0,0,0.7);
-            margin-bottom: 20px;
+            font-size: clamp(2rem, 8vw, 4rem);
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.8), 2px 2px 10px rgba(0,0,0,0.8);
+            margin-bottom: 40px;
             padding: 0 20px;
+            z-index: 10;
         }
 
         .buttons {
             position: relative;
-            height: 150px;
             width: 100%;
+            height: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
         }
 
         .btn {
-            padding: 15px 40px;
-            font-size: 1.5em;
+            padding: 15px 45px;
+            font-size: 1.5rem;
             border: none;
             cursor: pointer;
             border-radius: 50px;
             font-weight: bold;
-            transition: transform 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
         #yesBtn {
-            background-color: #ff4d6d;
+            background: linear-gradient(45deg, #ff4d6d, #ff758c);
             color: white;
             z-index: 100;
         }
 
         #noBtn {
-            background-color: #eeeeee;
+            background-color: #ffffff;
             color: #333;
             position: absolute;
             z-index: 10;
+            transition: left 0.2s ease, top 0.2s ease;
         }
 
-        /* Success Screen Styles */
+        /* Full Screen Background for "Yay" */
         #success-screen {
             display: none;
             background-image: url('https://i.imgur.com/WHh6I61.jpeg');
@@ -79,20 +82,26 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
         }
 
-        .success-text {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 20px;
-            color: white;
-            font-size: 3.5em;
+        .success-box {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 30px 50px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .success-box h1 {
+            margin: 0;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-container" id="quiz-container">
+    <div id="quiz-container">
         <h1>Will you be my Valentine? ❤️</h1>
         <div class="buttons">
             <button class="btn" id="yesBtn">YES</button>
@@ -101,36 +110,42 @@
     </div>
 
     <div id="success-screen">
-        <h1 class="success-text">YAY! I LOVE YOU! 🥰</h1>
+        <div class="success-box">
+            <h1>YAY! I LOVE YOU! 🥰</h1>
+        </div>
     </div>
 
     <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3"></audio>
 
     <script>
         $(document).ready(function() {
-            let scale = 1;
+            let yesScale = 1;
 
-            // Runaway NO button logic
-            $("#noBtn").on("mouseover touchstart", function() {
-                let x = Math.random() * (window.innerWidth - $(this).outerWidth());
-                let y = Math.random() * (window.innerHeight - $(this).outerHeight());
+            $("#noBtn").on("mouseover touchstart", function(e) {
+                // Calculate random position within screen bounds
+                const padding = 50;
+                const maxX = window.innerWidth - $(this).outerWidth() - padding;
+                const maxY = window.innerHeight - $(this).outerHeight() - padding;
                 
-                $(this).css({ left: x + "px", top: y + "px" });
+                const newX = Math.max(padding, Math.random() * maxX);
+                const newY = Math.max(padding, Math.random() * maxY);
+                
+                $(this).css({ left: newX + "px", top: newY + "px" });
 
-                // Make the YES button grow so he has no choice!
-                scale += 0.15;
-                $("#yesBtn").css("transform", "scale(" + scale + ")");
+                // Make the YES button grow bigger every time he fails
+                yesScale += 0.2;
+                $("#yesBtn").css("transform", `scale(${yesScale})`);
             });
 
-            // YES button click logic
             $("#yesBtn").click(function() {
-                $("#quiz-container").fadeOut(500, function() {
-                    $("#success-screen").css("display", "flex").hide().fadeIn(500);
+                $("#quiz-container").css("opacity", "0");
+                setTimeout(function() {
+                    $("#quiz-container").hide();
+                    $("#success-screen").css("display", "flex").hide().fadeIn(1000);
                     $("#song")[0].play();
-                });
+                }, 800);
             });
         });
     </script>
-
 </body>
 </html>
