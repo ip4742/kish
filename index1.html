@@ -19,23 +19,25 @@
             background-size: cover;
             background-position: center;
             height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
+            z-index: 1;
         }
 
         h1 {
             color: white;
             font-size: clamp(2rem, 6vw, 3.5rem);
             font-weight: 700;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.7);
-            margin-bottom: 200px; /* Space for the buttons to move */
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            margin-bottom: 250px;
             pointer-events: none;
         }
 
-        /* The moving decoy buttons */
+        /* Moving buttons - now with higher Z-index to ensure they show */
         .decoy-btn {
             padding: 15px 40px;
             font-size: 1.4rem;
@@ -45,42 +47,30 @@
             font-weight: 600;
             position: absolute;
             transition: all 0.15s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            z-index: 50;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 999; 
         }
 
-        #bigYes { background-color: #e63946; color: white; left: 40%; top: 60%; }
-        #bigNo { background-color: white; color: #333; left: 55%; top: 60%; }
+        /* Initial positions so they are visible immediately */
+        #bigYes { background-color: #e63946; color: white; top: 60%; left: 35%; }
+        #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
 
-        /* The Secret Tiny Button */
+        /* The Secret Tiny Button hidden on the Rutgers Flag */
         #secretYes {
             position: absolute;
-            width: 30px;
-            height: 20px;
-            background: transparent; /* Invisible but clickable */
-            border: 1px solid rgba(255,255,255,0.2); /* Slight hint */
-            color: rgba(255,255,255,0.5);
-            font-size: 8px;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
             cursor: pointer;
             z-index: 10;
-            /* YOU CAN CHANGE THESE COORDINATES TO HIDE IT ELSEWHERE */
-            top: 45%; 
-            left: 48%;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            top: 15%; /* Positioned near the red flag on the right */
+            right: 8%;
         }
 
-        #secretYes:hover {
-            background: rgba(255, 77, 109, 0.5);
-            color: white;
-        }
-
-        /* Success Screen */
         #success-screen {
             display: none;
-            background: url('https://i.imgur.com/WHh6I61.jpeg');
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://i.imgur.com/WHh6I61.jpeg');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -88,6 +78,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 2000;
         }
 
         .success-box {
@@ -97,6 +88,7 @@
             border-radius: 25px;
             color: white;
             text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
         }
     </style>
 </head>
@@ -108,22 +100,22 @@
         <button class="decoy-btn" id="bigYes">YES</button>
         <button class="decoy-btn" id="bigNo">NO</button>
 
-        <button id="secretYes">yes</button>
+        <button id="secretYes" title="???"></button>
     </div>
 
     <div id="success-screen">
         <div class="success-box">
-            <h1>YOU FOUND IT! 🥰<br>I LOVE YOU!</h1>
+            <h1>YOU FOUND IT! 🥰</h1>
+            <p style="font-size: 1.5rem;">I LOVE YOU! See you soon!</p>
         </div>
     </div>
 
-    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3"></audio>
+    <audio id="song" src="https://files.catbox.moe/vyw3qg.mp3" preload="auto"></audio>
 
     <script>
         $(document).ready(function() {
-            // Function to move buttons
             function moveButton(btn) {
-                const padding = 50;
+                const padding = 100;
                 const maxX = window.innerWidth - $(btn).outerWidth() - padding;
                 const maxY = window.innerHeight - $(btn).outerHeight() - padding;
                 const newX = Math.max(padding, Math.random() * maxX);
@@ -131,22 +123,22 @@
                 $(btn).css({ left: newX + "px", top: newY + "px" });
             }
 
-            // Make both big buttons move on hover
+            // Both buttons run away
             $("#bigYes, #bigNo").on("mouseover touchstart", function() {
                 moveButton(this);
             });
 
-            // If he actually manages to click a decoy
+            // If he manages to click a decoy
             $("#bigYes, #bigNo").click(function() {
-                alert("Too slow! Keep looking... 🕵️‍♂️");
                 moveButton(this);
             });
 
-            // The Secret Success Button
+            // The Secret Success Button (Hidden on the Rutgers Flag)
             $("#secretYes").click(function() {
                 $("#quiz-container").fadeOut(800, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
-                    document.getElementById("song").play();
+                    let track = document.getElementById("song");
+                    track.play().catch(e => console.log("Music blocked by browser until interaction."));
                 });
             });
         });
