@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valentine 2026 🎀</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         body, html {
             height: 100%;
@@ -15,7 +16,7 @@
         }
 
         #quiz-container {
-            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('https://i.imgur.com/98tfSE7.jpeg');
+            background: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('https://i.imgur.com/98tfSE7.jpeg');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -29,49 +30,51 @@
 
         h1 {
             color: white;
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            font-weight: 700;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.9);
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
             margin-bottom: 250px;
+            z-index: 10;
             pointer-events: none;
-            z-index: 5;
         }
 
+        /* The Moving Decoy Buttons */
         .decoy-btn {
-            padding: 12px 35px;
-            font-size: 1.2rem;
+            padding: 15px 40px;
+            font-size: 1.3rem;
             border: none;
             cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
             position: absolute;
             transition: all 0.1s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             z-index: 100;
         }
 
-        #bigYes { background-color: #e63946; color: white; top: 55%; left: 30%; }
-        #bigNo { background-color: white; color: #333; top: 55%; left: 55%; }
+        #bigYes { background-color: #e63946; color: white; top: 60%; left: 30%; }
+        #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
 
-        /* THE SECRET BUTTON - Now says "of course baby" */
+        /* THE SECRET BUTTON - Visible but subtle on the red flag */
         #secretYes {
             position: absolute;
             background: transparent;
             border: none;
             cursor: pointer;
-            z-index: 10;
-            top: 15%; /* Aligned with the Rutgers Flag area */
-            right: 8%;
-            color: rgba(255, 255, 255, 0.4); /* Faint so it blends with the white logo */
-            font-size: 10px;
+            z-index: 500; /* High layer to stay on top */
+            top: 14%; 
+            right: 8.5%;
+            color: rgba(255, 255, 255, 0.7); /* More visible than before */
+            font-size: 11px;
             font-weight: bold;
             text-transform: lowercase;
-            transition: color 0.3s ease;
+            text-shadow: 0 0 8px #e63946; /* Red glow to help it pop */
+            padding: 10px;
         }
 
         #secretYes:hover {
             color: white;
-            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+            text-shadow: 0 0 15px white;
+            transform: scale(1.1);
         }
 
         #success-screen {
@@ -102,7 +105,7 @@
 <body>
 
     <div id="quiz-container">
-        <h1>Can you find the right answer? ❤️</h1>
+        <h1>Will you be my Valentine? ❤️</h1>
         
         <button class="decoy-btn" id="bigYes">YES</button>
         <button class="decoy-btn" id="bigNo">NO</button>
@@ -122,7 +125,7 @@
     <script>
         $(document).ready(function() {
             function moveButton(btn) {
-                const padding = 80;
+                const padding = 100;
                 const maxX = window.innerWidth - $(btn).outerWidth() - padding;
                 const maxY = window.innerHeight - $(btn).outerHeight() - padding;
                 const newX = Math.max(padding, Math.random() * maxX);
@@ -130,12 +133,10 @@
                 $(btn).css({ left: newX + "px", top: newY + "px" });
             }
 
-            // Decoys move away
             $("#bigYes, #bigNo").on("mouseover touchstart", function() {
                 moveButton(this);
             });
 
-            // Secret button click
             $("#secretYes").click(function() {
                 $("#quiz-container").fadeOut(600, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
