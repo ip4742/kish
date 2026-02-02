@@ -7,87 +7,114 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* Basic Setup */
         body, html { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #000; }
 
-        /* Full Screen Background Setup */
-        .bg-setup {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        /* Background Layers - Forced to be visible */
+        .full-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
+        /* Initial Black Overlay for Browser Permission */
         #overlay {
-            position: fixed; z-index: 3000; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; color: white; cursor: pointer;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 5000; color: white; cursor: pointer;
         }
 
+        /* Page 1: Quiz Background */
         #quiz-container {
-            background-image: url('https://i.imgur.com/98tfSE7.jpeg');
-            z-index: 1;
+            background-image: url('https://i.imgur.com/98tfSE7.jpeg') !important;
+            z-index: 10;
         }
 
+        /* Page 2: Success Background */
         #success-screen {
-            display: none; 
-            background-image: url('https://i.imgur.com/WHh6I61.jpeg');
+            display: none;
+            background-image: url('https://i.imgur.com/WHh6I61.jpeg') !important;
             z-index: 2000;
         }
 
-        h1 { color: white; font-size: clamp(2rem, 8vw, 3.5rem); text-shadow: 2px 2px 20px rgba(0,0,0,1); text-align: center; margin-bottom: 200px; }
+        /* Text & Buttons Styling */
+        h1 { 
+            color: white; 
+            font-size: clamp(1.8rem, 6vw, 3.5rem); 
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.8); 
+            margin-bottom: 200px;
+            text-align: center;
+            padding: 20px;
+        }
 
         .decoy-btn {
-            padding: 15px 40px; font-size: 1.3rem; border: none; cursor: pointer;
+            padding: 15px 45px; font-size: 1.3rem; border: none; cursor: pointer;
             border-radius: 50px; font-weight: 700; position: absolute;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 100;
         }
 
-        #bigYes { background-color: #ff4d6d; color: white; top: 60%; left: 30%; }
+        #bigYes { background-color: #ff4d6d; color: white; top: 60%; left: 25%; }
         #bigNo { background-color: white; color: #333; top: 60%; left: 55%; }
 
+        /* Secret Pulse Button */
         #secretYes {
             position: absolute; background: transparent; border: none; cursor: pointer;
-            z-index: 500; top: 14%; right: 8%; color: rgba(255, 255, 255, 0.9);
-            font-size: 12px; font-weight: bold; text-shadow: 0 0 10px #ff4d6d;
-            animation: pulse 1.5s infinite;
+            z-index: 500; top: 14%; right: 8.5%; color: white;
+            font-size: 11px; font-weight: bold; text-shadow: 0 0 10px #ff4d6d;
+            animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
 
+        /* Success Box */
         .success-box {
-            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px);
-            padding: 40px; border-radius: 25px; color: white; text-align: center;
-            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px 60px; border-radius: 30px; color: white; text-align: center;
+            border: 1.5px solid rgba(255,255,255,0.3);
             animation: spin-in 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 3000;
         }
 
         @keyframes spin-in { 0% { transform: scale(0) rotate(0deg); } 100% { transform: scale(1) rotate(360deg); } }
 
-        #kish-tag { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff4d6d; margin-top: 15px; }
+        #kish-tag { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff4d6d; text-shadow: 0 0 10px white; margin-top: 10px; }
 
-        .heart { position: absolute; color: #ff4d6d; font-size: 25px; animation: fly 4s linear forwards; z-index: 2500; }
-        @keyframes fly { 0% { transform: translateY(110vh); opacity: 1; } 100% { transform: translateY(-10vh); opacity: 0; } }
-        
-        canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2100; }
+        /* Floating Hearts */
+        .heart { position: absolute; color: #ff4d6d; animation: fly 4s linear forwards; z-index: 4000; pointer-events: none; }
+        @keyframes fly { 0% { transform: translateY(110vh); } 100% { transform: translateY(-10vh); } }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 2100; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <h2 style="font-family: 'Dancing Script'; font-size: 3.5rem;">For you... ❤️</h2>
-        <p>Click to start the music</p>
+        <h2 style="font-family: 'Dancing Script'; font-size: 3rem;">A message for you... ❤️</h2>
+        <p>Click to open</p>
     </div>
 
-    <div id="quiz-container" class="bg-setup">
+    <div id="quiz-container" class="full-bg">
         <h1>Will you be my Valentine? ❤️</h1>
         <button class="decoy-btn" id="bigYes">YES</button>
         <button class="decoy-btn" id="bigNo">NO</button>
         <button id="secretYes">of course baby</button>
     </div>
 
-    <div id="success-screen" class="bg-setup">
+    <div id="success-screen" class="full-bg">
         <canvas id="fireworksCanvas"></canvas>
         <div class="success-box">
-            <h1 style="margin:0;">GREAT ANSWER! 🥰</h1>
-            <p style="font-size: 1.5rem;">I LOVE YOU!</p>
+            <h1 style="margin:0; font-size: 2.8rem;">GREAT ANSWER! 🥰</h1>
+            <p style="font-size: 1.5rem; margin-top: 10px;">I LOVE YOU!</p>
             <div id="kish-tag">#kish</div>
         </div>
     </div>
@@ -101,7 +128,7 @@
             const song = document.getElementById("song");
 
             $("#overlay").click(function() {
-                $(this).fadeOut(500);
+                $(this).fadeOut(600);
                 song.play().then(() => song.pause()); 
             });
 
@@ -114,17 +141,18 @@
             $("#bigYes, #bigNo").on("mouseover touchstart", function() { moveButton(this); });
 
             function createHeart() {
-                const heart = $('<div class="heart">❤️</div>').css({ left: Math.random() * 100 + "vw" });
+                const heart = $('<div class="heart">❤️</div>').css({ left: Math.random() * 100 + "vw", fontSize: Math.random() * 20 + 15 + "px" });
                 $('#success-screen').append(heart);
                 setTimeout(() => heart.remove(), 4000);
             }
 
             $("#secretYes").click(function() {
-                $("#quiz-container").hide();
-                $("#success-screen").css("display", "flex");
-                song.play();
-                setInterval(createHeart, 300);
-                startFireworks();
+                $("#quiz-container").fadeOut(500, function() {
+                    $("#success-screen").css("display", "flex").hide().fadeIn(800);
+                    song.play();
+                    setInterval(createHeart, 300);
+                    startFireworks();
+                });
             });
         });
 
@@ -136,19 +164,19 @@
             class Particle {
                 constructor(x, y, color) {
                     this.x = x; this.y = y; this.color = color;
-                    this.velocity = { x: (Math.random()-0.5)*10, y: (Math.random()-0.5)*10 };
+                    this.velocity = { x: (Math.random()-0.5)*12, y: (Math.random()-0.5)*12 };
                     this.alpha = 1;
                 }
-                draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fillStyle = this.color; ctx.fill(); ctx.restore(); }
-                update() { this.x += this.velocity.x; this.y += this.velocity.y; this.velocity.y += 0.1; this.alpha -= 0.01; }
+                draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, Math.PI*2); ctx.fillStyle = this.color; ctx.fill(); ctx.restore(); }
+                update() { this.x += this.velocity.x; this.y += this.velocity.y; this.velocity.y += 0.15; this.alpha -= 0.015; }
             }
             function animate() {
                 requestAnimationFrame(animate);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if (Math.random() < 0.1) {
-                    const x = Math.random() * canvas.width; const y = Math.random() * canvas.height/2;
-                    const color = `hsl(${Math.random()*360}, 100%, 50%)`;
-                    for(let i=0; i<30; i++) particles.push(new Particle(x, y, color));
+                if (Math.random() < 0.12) {
+                    const x = Math.random() * canvas.width; const y = Math.random() * (canvas.height/2);
+                    const color = `hsl(${Math.random()*360}, 100%, 65%)`;
+                    for(let i=0; i<40; i++) particles.push(new Particle(x, y, color));
                 }
                 particles.forEach((p, i) => { if(p.alpha <= 0) particles.splice(i, 1); else { p.update(); p.draw(); } });
             }
