@@ -23,7 +23,7 @@
             justify-content: center; align-items: center; position: relative;
         }
 
-        h1 { color: white; font-size: clamp(1.8rem, 5vw, 3.5rem); text-shadow: 0 4px 15px rgba(0,0,0,0.8); margin-bottom: 250px; z-index: 10; pointer-events: none; }
+        h1 { color: white; font-size: clamp(1.8rem, 5vw, 3.5rem); text-shadow: 0 4px 15px rgba(0,0,0,0.8); margin-bottom: 250px; z-index: 10; }
 
         .decoy-btn {
             padding: 15px 40px; font-size: 1.3rem; border: none; cursor: pointer;
@@ -36,25 +36,19 @@
 
         #secretYes {
             position: absolute; background: transparent; border: none; cursor: pointer;
-            z-index: 500; top: 14%; right: 8.5%; color: rgba(255, 255, 255, 0.8);
-            font-size: 12px; font-weight: bold; text-transform: lowercase;
-            text-shadow: 0 0 8px #e63946; padding: 10px;
+            z-index: 500; top: 14.5%; right: 8.5%; color: rgba(255, 255, 255, 0.8);
+            font-size: 11px; font-weight: bold; text-shadow: 0 0 8px #e63946;
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; text-shadow: 0 0 15px #e63946; }
-            100% { opacity: 0.4; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
         /* Success Screen */
         #success-screen {
             display: none; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.imgur.com/WHh6I61.jpeg');
             background-size: cover; background-position: center;
             height: 100vh; width: 100vw; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 1000;
-            overflow: hidden;
+            justify-content: center; align-items: center; z-index: 1000; position: relative;
         }
 
         .success-box {
@@ -63,13 +57,7 @@
             border: 2px solid rgba(255,255,255,0.4);
             box-shadow: 0 0 40px rgba(255, 77, 109, 0.6);
             animation: spin-in 1.5s ease-out forwards;
-            position: relative; z-index: 1001;
-        }
-
-        #kish-tag {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem; color: #ff4d6d;
-            text-shadow: 0 0 10px white; margin-top: 10px;
+            position: relative; z-index: 1100;
         }
 
         @keyframes spin-in {
@@ -77,11 +65,15 @@
             100% { transform: scale(1) rotate(360deg); opacity: 1; }
         }
 
-        /* Floating Hearts */
+        #kish-tag {
+            font-family: 'Dancing Script', cursive; font-size: 2.8rem;
+            color: #ff4d6d; text-shadow: 0 0 10px white; margin-top: 15px;
+        }
+
+        /* Floating Hearts Layer */
         .heart {
             position: absolute; color: #ff4d6d; font-size: 20px;
-            user-select: none; pointer-events: none;
-            animation: fly 4s linear infinite; z-index: 1002;
+            animation: fly 4s linear forwards; z-index: 1050;
         }
 
         @keyframes fly {
@@ -89,8 +81,7 @@
             100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
 
-        /* Firework Canvas */
-        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events: none; }
+        canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1001; }
     </style>
 </head>
 <body>
@@ -108,10 +99,10 @@
     </div>
 
     <div id="success-screen">
-        <canvas id="canvas"></canvas>
+        <canvas id="fireworksCanvas"></canvas>
         <div class="success-box">
-            <h1 style="margin:0; font-size: 3rem;">great answer! 🥰</h1>
-            <p style="font-size: 1.5rem; margin-top: 10px; margin-bottom: 5px;">I LOVE YOU!</p>
+            <h1 style="margin:0; font-size: 3rem;">GREAT ANSWER! 🥰</h1>
+            <p style="font-size: 1.5rem; margin-top: 10px;">I LOVE YOU!</p>
             <div id="kish-tag">#kish</div>
         </div>
     </div>
@@ -126,22 +117,20 @@
 
             $("#overlay").click(function() {
                 $(this).fadeOut(500);
-                song.play(); song.pause(); song.currentTime = 0;
+                song.play().then(() => song.pause()); 
             });
 
             function moveButton(btn) {
-                const padding = 100;
-                const maxX = window.innerWidth - $(btn).outerWidth() - padding;
-                const maxY = window.innerHeight - $(btn).outerHeight() - padding;
-                $(btn).css({ left: Math.max(padding, Math.random() * maxX) + "px", top: Math.max(padding, Math.random() * maxY) + "px" });
+                const maxX = window.innerWidth - $(btn).outerWidth() - 100;
+                const maxY = window.innerHeight - $(btn).outerHeight() - 100;
+                $(btn).css({ left: Math.random() * maxX + "px", top: Math.random() * maxY + "px" });
             }
 
             $("#bigYes, #bigNo").on("mouseover touchstart", function() { moveButton(this); });
 
-            // Create Hearts
             function createHeart() {
                 const heart = $('<div class="heart">❤️</div>');
-                heart.css({ left: Math.random() * 100 + "vw", fontSize: (Math.random() * 20 + 10) + "px" });
+                heart.css({ left: Math.random() * 100 + "vw", top: "100vh" });
                 $('#success-screen').append(heart);
                 setTimeout(() => heart.remove(), 4000);
             }
@@ -150,44 +139,45 @@
                 $("#quiz-container").fadeOut(600, function() {
                     $("#success-screen").css("display", "flex").hide().fadeIn(1000);
                     song.play();
-                    setInterval(createHeart, 300);
-                    initFireworks();
+                    setInterval(createHeart, 250);
+                    startFireworks();
                 });
             });
         });
 
-        // Simple Firework Script
-        function initFireworks() {
-            const canvas = document.getElementById("canvas");
+        function startFireworks() {
+            const canvas = document.getElementById("fireworksCanvas");
             const ctx = canvas.getContext("2d");
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             let particles = [];
 
-            function Particle(x, y, color) {
-                this.x = x; this.y = y; this.color = color;
-                this.velocity = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
-                this.alpha = 1;
-                this.draw = () => {
-                    ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath();
-                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2); ctx.fillStyle = this.color;
-                    ctx.fill(); ctx.restore();
-                };
-                this.update = () => {
-                    this.velocity.y += 0.05; this.x += this.velocity.x; this.y += this.velocity.y;
-                    this.alpha -= 0.01;
-                };
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x; this.y = y; this.color = color;
+                    this.velocity = { x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10 };
+                    this.alpha = 1;
+                }
+                draw() {
+                    ctx.save(); ctx.globalAlpha = this.alpha;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color; ctx.fill(); ctx.restore();
+                }
+                update() {
+                    this.velocity.y += 0.1; this.x += this.velocity.x; this.y += this.velocity.y;
+                    this.alpha -= 0.015;
+                }
             }
 
             function animate() {
                 requestAnimationFrame(animate);
-                ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                if (Math.random() < 0.05) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (Math.random() < 0.1) {
                     const x = Math.random() * canvas.width; const y = Math.random() * canvas.height/2;
-                    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-                    for(let i=0; i<30; i++) particles.push(new Particle(x, y, color));
+                    const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                    for(let i=0; i<40; i++) particles.push(new Particle(x, y, color));
                 }
-                particles.forEach((p, i) => { if(p.alpha <= 0) particles.splice(i, 1); else { p.update(); p.draw(); } });
+                particles.forEach((p, i) => { if (p.alpha <= 0) particles.splice(i, 1); else { p.update(); p.draw(); } });
             }
             animate();
         }
